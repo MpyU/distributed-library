@@ -17,6 +17,7 @@ public class BookController {
     @GetMapping("/get/{id}")
     public Result<Book> get(@PathVariable("id")Integer id){
         Book book = bookService.get(id);
+        System.out.println(book);
         if(book != null){
             return new Result(ResultCode.SUCCESS,"查询图书信息成功！",book);
         }

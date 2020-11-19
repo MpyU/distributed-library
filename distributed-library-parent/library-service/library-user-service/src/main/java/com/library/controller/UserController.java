@@ -10,11 +10,12 @@ import com.library.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -31,14 +32,27 @@ public class UserController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
 
     @PostMapping("/save")
     public Result<Integer> save(User user){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:ss");
-        user.setRegisterDate(simpleDateFormat.format(new Date()));
-        System.out.println(user);
         int row = userService.save(user);
         if(row > 0){
+            return new Result(ResultCode.SUCCESS,"新增用户成功！",row);
+        }
+        return new Result(ResultCode.FAIL,"新增用户失败！");
+    }
+
+    @PostMapping("/register")
+    public Result<Integer> register(User user){
+        int row = userService.save(user);
+        if(row > 0){
+            Map<String,String> map = new HashMap<>();
+            map.put("email",user.getEmail());
+            Result<Integer> result = restTemplate.getForObject("http://EMAIL-SERVICE/email/send?email={email}",Result.class,map);
+            System.out.println(result.getMessage());
             return new Result(ResultCode.SUCCESS,"注册成功！",row);
         }
         return new Result(ResultCode.FAIL,"注册失败！");
@@ -70,6 +84,7 @@ public class UserController {
     @GetMapping("/get/{id}")
     public Result<User> get(@PathVariable("id")Integer id){
         User u = userService.get(new User(id));
+        System.out.println(u);
         if(u != null){
             return new Result(ResultCode.SUCCESS,"查询用户成功！",u);
         }

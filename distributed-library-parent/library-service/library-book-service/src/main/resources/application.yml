@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: book-service9001
+    name: book-service
   datasource:
     driver-class-name: org.gjt.mm.mysql.Driver
     url: jdbc:mysql://10.10.102.163:3306/library2?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false

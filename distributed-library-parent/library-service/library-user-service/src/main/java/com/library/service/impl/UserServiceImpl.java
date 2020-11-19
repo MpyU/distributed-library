@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -42,12 +44,12 @@ public class UserServiceImpl implements UserService {
     public PageInfo<User> selectAll(Integer pageSize, Integer currentPage) {
         PageInfo<User> pageInfo = null;
         List<User> users = null;
-        PageHelper.startPage(currentPage,pageSize);
+
         if(redisTemplate.opsForValue().get("userList") == null){
-            System.out.println("userList---redis-0------");
             users = userDao.selectAll();
             redisTemplate.opsForValue().set("userList",users);
         }else{
+            PageHelper.startPage(currentPage,pageSize);
             users = (List<User>) redisTemplate.opsForValue().get("userList");
         }
         pageInfo = new PageInfo<>(users);
@@ -58,7 +60,9 @@ public class UserServiceImpl implements UserService {
     public int save(User user) {
         String encode = Md5Utils.encode(user.getPassword());
         user.setPassword(encode);
-        return userDao.insert(user);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String date = simpleDateFormat.format(new Date());
+        return userDao.insert(user.setRegisterDate(date));
     }
 
     @Override
@@ -70,4 +74,7 @@ public class UserServiceImpl implements UserService {
     public int delete(Integer id) {
         return userDao.deleteByPrimaryKey(id);
     }
+
+
+
 }

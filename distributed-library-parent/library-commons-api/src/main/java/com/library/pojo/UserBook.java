@@ -3,6 +3,7 @@ package com.library.pojo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class UserBook implements Serializable {
     /**
      id int primary key auto_increment comment "ID",
@@ -35,5 +37,12 @@ public class UserBook implements Serializable {
 
     public UserBook(Integer id){
         this.id = id;
+    }
+
+    public UserBook(Integer uid,Integer bookId,Integer status,String lendDate){
+        this.uid = uid;
+        this.bid = bookId;
+        this.status = status;
+        this.lendDate = lendDate;
     }
 }

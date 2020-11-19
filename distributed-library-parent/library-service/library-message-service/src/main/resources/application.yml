@@ -1,0 +1,33 @@
+server:
+  port: 13001
+
+spring:
+  application:
+    name: message-service
+  datasource:
+    driver-class-name: org.gjt.mm.mysql.Driver
+    url: jdbc:mysql://10.10.102.163:3306/library2?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
+  redis:
+    host: 119.29.172.177
+    port: 6379
+  rabbitmq:
+    host: 10.10.102.163
+    port: 5672
+    virtualHost: host1
+    username: admin
+    password: admin
+
+mybatis:
+  type-aliases-package: com.library.pojo
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://10.10.102.163:7001/eureka/
+  instance:
+    prefer-ip-address: true

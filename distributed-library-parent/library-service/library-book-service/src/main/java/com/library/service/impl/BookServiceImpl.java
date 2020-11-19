@@ -32,7 +32,6 @@ public class BookServiceImpl implements BookService {
     public PageInfo<Book> selectAllByCondition(Integer currentPage, Integer pageSize, Book book) {
         PageInfo<Book> pageInfo = null;
         List<Book> books = null;
-        PageHelper.startPage(currentPage,pageSize);
         if(redisTemplate.opsForValue().get("bookList") == null){
             if(!StringUtils.isEmpty(book.getBookName())){
                 book.setBookName("%"+book.getBookName()+"%");
@@ -40,7 +39,9 @@ public class BookServiceImpl implements BookService {
             books = bookDao.select(book);
             redisTemplate.opsForValue().set("bookList",books);
         }else{
+            PageHelper.startPage(currentPage,pageSize);
             books = (List<Book>) redisTemplate.opsForValue().get("bookList");
+
         }
         pageInfo = new PageInfo<>(books);
         return pageInfo;
@@ -63,7 +64,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int save(Book t) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String date = simpleDateFormat.format(new Date());
         t.setPublishDate(date);
         int row = bookDao.insert(t);
@@ -72,7 +73,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int update(Book t) {
-        return bookDao.updateByPrimaryKey(t);
+        return bookDao.updateByPrimaryKeySelective(t);
     }
 
     @Override
