@@ -1,10 +1,13 @@
 package com.library.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.library.dao.NoticeUserDao;
 import com.library.pojo.Notice;
+import com.library.pojo.NoticeUser;
 import com.library.pojo.Result;
 import com.library.pojo.ResultCode;
 import com.library.service.MessageService;
+import com.library.service.NoticeUserService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,9 @@ public class MessageController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private NoticeUserService noticeUserService;
 
 
 
@@ -53,10 +59,27 @@ public class MessageController {
         }
         return new Result(ResultCode.FAIL,"消息未发送成功！");
     }
+   //传入用户id和公告id，插入一条已读记录
+    @PostMapping("/setRead/{userId}/{noticeId}")
+    public Result<Integer> setReadByUserId(@PathVariable("userId")Integer userId,@PathVariable("noticeId")Integer noticeId){
+//        int result=noticeUserService.setReadByUserId(userId,noticeId);
+        NoticeUser noticeUser=new NoticeUser(userId,noticeId,1);
+        int result=noticeUserService.insert(noticeUser);
+        return new Result(ResultCode.SUCCESS,"更新成功",result);
+
+    }
+    //查出所有未读消息，用户id
+    @GetMapping("getUnReadMsgByUserId/{userId}")
+    public Result<List<Notice>> unReadMsg(@PathVariable("userId")Integer userId){
+        List<Notice> list=noticeUserService.selectunReadMsgByUserId(userId);
+        System.out.println("list:"+list);
+        return new Result(ResultCode.SUCCESS,"查询未读消息成功",list);
+    }
 
     @PostMapping("/save")
     public Result<Integer> save(@RequestBody Notice notice){
         int row = messageService.save(notice);
+
         if(row > 0){
             return new Result(ResultCode.SUCCESS,"发布消息成功！",row);
         }

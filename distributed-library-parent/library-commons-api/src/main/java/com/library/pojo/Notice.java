@@ -31,4 +31,32 @@ public class Notice implements Serializable {
     private Integer status;
 
     private User user;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Notice notice = (Notice) o;
+
+        if (id != null ? !id.equals(notice.id) : notice.id != null) return false;
+        if (message != null ? !message.equals(notice.message) : notice.message != null) return false;
+        if (uid != null ? !uid.equals(notice.uid) : notice.uid != null) return false;
+        if (publishDate != null ? !publishDate.equals(notice.publishDate) : notice.publishDate != null) return false;
+        if (status != null ? !status.equals(notice.status) : notice.status != null) return false;
+        return user != null ? user.equals(notice.user) : notice.user == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (message != null ? message.hashCode() : 0);
+        result = 31 * result + (uid != null ? uid.hashCode() : 0);
+        result = 31 * result + (publishDate != null ? publishDate.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (user != null ? user.hashCode() : 0);
+        return result;
+    }
 }

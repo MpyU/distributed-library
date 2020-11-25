@@ -35,7 +35,18 @@ public class AdminController {
     private static String NOTICE_URL = "http://MESSAGE-SERVICE/message/";
     private static String BOOK_URL = "http://BOOK-SERVICE/book/";
 
-//
+    //查出所有未读消息，用户id
+    @GetMapping("/message/getUnReadMsgByUserId/{userId}")
+    public Result<List<Notice>> unReadMsg(@PathVariable("userId")Integer userId){
+     return  restTemplate.getForObject(NOTICE_URL+"getUnReadMsgByUserId/"+userId,Result.class);
+    }
+    //传入用户id和公告id，插入一条已读记录
+    @PostMapping("/message/setRead/{userId}/{noticeId}")
+    public Result<Integer> setReadByUserId(@PathVariable("userId")Integer userId,@PathVariable("noticeId")Integer noticeId){
+        HttpHeaders heads=new HttpHeaders();
+        HttpEntity httpEntity=new HttpEntity("",heads);
+        return restTemplate.postForObject(NOTICE_URL+"/setRead/"+userId+"/"+noticeId,httpEntity,Result.class);
+    }
 ////    借书，还书：
 ////    借书：
     @PostMapping("/lend/{userId}/{bookId}")
@@ -295,6 +306,7 @@ public Result lendBook(@PathVariable("userId")Integer userId,@PathVariable("book
 
     @PostMapping("/notice/save")
     public Result<Integer> saveNotice(Notice notice){
+
         return restTemplate.postForObject(NOTICE_URL+"save",notice,Result.class);
     }
 

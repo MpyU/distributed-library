@@ -3,24 +3,35 @@ package com.library.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.library.dao.MessageDao;
-import com.library.pojo.Fine;
-import com.library.pojo.Notice;
+import com.library.dao.NoticeUserDao;
+import com.library.pojo.*;
 import com.library.service.MessageService;
+import com.library.utils.ConvertJsonToBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class MessageServiceImpl implements MessageService {
+    @Autowired
+    RestTemplate restTemplate;
+    private static String USER_URL = "http://USER-SERVICE/user/";
 
     @Autowired
     private MessageDao messageDao;
+
+
+
+    @Autowired
+    private NoticeUserDao noticeUserDao;
 
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
@@ -50,7 +61,15 @@ public class MessageServiceImpl implements MessageService {
         String date = simpleDateFormat.format(new Date());
         t.setPublishDate(date);
         t.setStatus(0);
-        return messageDao.insert(t);
+//        Result result=restTemplate.getForObject(USER_URL+"selectAll", Result.class);
+//        List list= (List<User>) result.getData();
+//       System.out.println("list:"+list);
+        int insertResult=messageDao.insert(t);
+//        for (Object obj:list) {
+//            User user=ConvertJsonToBean.convertMapToBean((Map<String, Object>) obj,User.class);
+//            noticeUserDao.insert(new NoticeUser(user.getId(),t.getId()));
+//        }
+        return insertResult;
     }
 
     @Override
