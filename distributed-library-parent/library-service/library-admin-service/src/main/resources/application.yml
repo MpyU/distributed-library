@@ -1,0 +1,35 @@
+server:
+  port: 15001
+
+spring:
+  application:
+    name: admin-service
+  datasource:
+    driver-class-name: org.gjt.mm.mysql.Driver
+    url: jdbc:mysql://10.10.102.163:3306/library2?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
+#  redis:
+#    #品裕的：
+#    #    host: 119.29.172.177
+#    host: 119.29.23.121
+#    port: 6379
+#    password: ba36754794
+  rabbitmq:
+    host: 10.10.102.163
+    port: 5672
+    virtualHost: host1
+    username: admin
+    password: admin
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://10.10.102.163:7001/eureka/
+  instance:
+    prefer-ip-address: true
+logging:
+  level:
+    com.library.dao: debug
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

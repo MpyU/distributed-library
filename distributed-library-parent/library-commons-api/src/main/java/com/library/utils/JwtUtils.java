@@ -53,4 +53,8 @@ public class JwtUtils {
         return claims;
     }
 
+    public static void main(String[] args) {
+
+    }
+
 }

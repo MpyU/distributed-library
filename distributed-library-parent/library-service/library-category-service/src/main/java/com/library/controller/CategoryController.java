@@ -43,7 +43,7 @@ public class CategoryController {
     }
 
     @PostMapping("/save")
-    public Result<Integer> save(Category category){
+    public Result<Integer> save(@RequestBody  Category category){
         int row = categoryService.save(category);
         if(row > 0){
             return new Result(ResultCode.SUCCESS,"添加分类成功！",row);
@@ -52,7 +52,7 @@ public class CategoryController {
     }
 
     @PutMapping("/update")
-    public Result<Integer> update(Category category){
+    public Result<Integer> update(@RequestBody  Category category){
         int row = categoryService.update(category);
         if(row > 0){
             return new Result(ResultCode.SUCCESS,"修改分类信息成功！",row);

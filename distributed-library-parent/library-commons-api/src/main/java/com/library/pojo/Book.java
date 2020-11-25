@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 @Table(name = "book")
+@Document(indexName = "book_index",type = "book")
 public class Book implements Serializable {
     /**
      * 	id int primary key auto_increment comment "ID",
@@ -37,27 +40,46 @@ public class Book implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.annotation.Id
     private Integer id;
     private String cardId;
+    @Field
     private String searchId;
+    @Field
     private String bookName;
+    @Field
     private Integer cid;
+    @Field
     private String author;
+    @Field
     private String cover;
+    @Field
     private String press;
+    @Field
     private String pressDate;
+    @Field
     private String bookDesc;
+    @Field
     private Integer bookShelf;
+    @Field
     private Integer bookFloor;
+    @Field
     private Integer count;
+    @Field
     private Double price;
+    @Field
     private Integer isLend;
+    @Field
     private Integer dayClickCount;
+    @Field
     private Integer monthClickCount;
+    @Field
     private Integer totalClickCount;
+    @Field
     private String publishDate;
 
     @Transient
+    @Field
     private com.library.pojo.Category category;
 
     public Book(Integer id){

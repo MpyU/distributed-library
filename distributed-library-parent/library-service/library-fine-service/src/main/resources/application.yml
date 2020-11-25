@@ -10,8 +10,10 @@ spring:
     username: root
     password: root
   redis:
-    host: 119.29.172.177
+#    host: 119.29.172.177
+    host: 119.29.23.121
     port: 6379
+    password: ba36754794
 
 mybatis:
   type-aliases-package: com.library.pojo

@@ -6,10 +6,12 @@ import com.library.dao.CategoryDao;
 import com.library.pojo.Category;
 import com.library.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -18,7 +20,10 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryDao categoryDao;
 
     @Autowired
-    private RedisTemplate<String,Object> redisTemplate;
+    private RestTemplate restTemplate;
+
+//    @Autowired
+//    private RedisTemplate<String,Object> redisTemplate;
 
     @Override
     public Category get(Integer id) {
@@ -29,13 +34,8 @@ public class CategoryServiceImpl implements CategoryService {
     public PageInfo<Category> selectAll(Integer currentPage, Integer pageSize) {
 
         List<Category> list = null;
-        if(redisTemplate.opsForValue().get("categoryList") != null){
-            list = (List<Category>) redisTemplate.opsForValue().get("categoryList");
-        }else{
-            PageHelper.startPage(currentPage,pageSize);
-            list=categoryDao.selectAll();
-            redisTemplate.opsForValue().set("categoryList",list);
-        }
+        PageHelper.startPage(currentPage,pageSize);
+        list=categoryDao.selectAll();
         PageInfo<Category> pageInfo=new PageInfo<>(list);
         return pageInfo;
     }
@@ -58,7 +58,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public int delete(Integer id) {
-        return categoryDao.deleteByPrimaryKey(id);
+        int row = categoryDao.deleteByPrimaryKey(id);
+        if(row > 0){
+            Map<String,Integer> map = new HashMap<>();
+            map.put("cid",id);
+            restTemplate.delete("http://book-service/book/deleteByCid/{cid}", map);
+        }
+        return row;
     }
 
 }

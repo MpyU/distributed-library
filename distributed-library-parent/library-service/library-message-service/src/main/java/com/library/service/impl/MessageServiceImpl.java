@@ -9,10 +9,12 @@ import com.library.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -31,12 +33,9 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public PageInfo<Notice> selectAll(Integer currentPage, Integer pageSize) {
         List<Notice> list = null;
-        if(redisTemplate.opsForValue().get("noticeList") != null){
-            list = (List<Notice>) redisTemplate.opsForValue().get("noticeList");
-        }else{
-            PageHelper.startPage(currentPage,pageSize);
-            list = messageDao.selectAll();
-        }
+        PageHelper.startPage(currentPage,pageSize);
+        list = messageDao.selectAll();
+        redisTemplate.opsForValue().set("noticeList",list,60*10, TimeUnit.SECONDS);
         return new PageInfo<>(list);
     }
 
@@ -69,13 +68,22 @@ public class MessageServiceImpl implements MessageService {
     public PageInfo<Notice> getNoticeByUid(Integer uid,Integer currentPage,Integer pageSize) {
 
         List<Notice> list = null;
-        if(redisTemplate.opsForValue().get("noticeList") != null){
-            list = (List<Notice>) redisTemplate.opsForValue().get("noticeList");
-        }else{
-            PageHelper.startPage(currentPage,pageSize);
-            list = messageDao.select(new Notice().setUid(uid));
-            redisTemplate.opsForValue().set("noticeList",list);
-        }
+        PageHelper.startPage(currentPage,pageSize);
+        list = messageDao.select(new Notice().setUid(uid));
         return new PageInfo<>(list);
     }
+
+//    @RabbitListener(queues = "email_queue")
+//    @RabbitHandler
+//    public void receiveMsg(String code){
+//
+//    }
+  @Override
+  public List<Notice> selectByMessage(Integer pageSize, Integer currentPage, String message) {
+    message="%"+message+"%";
+    PageHelper.startPage(currentPage,pageSize);
+    Example example=new Example(Notice.class);
+    example.createCriteria().andLike("message",message);
+    return messageDao.selectByExample(example);
+  }
 }

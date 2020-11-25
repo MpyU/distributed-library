@@ -21,9 +21,21 @@ public class UserBookController {
 
         UserBook userBook = userBookService.get(id);
         if(userBook != null){
-            return new Result(ResultCode.SUCCESS,"查询节约历史信息成功！",userBook);
+            return new Result(ResultCode.SUCCESS,"查询借阅历史信息成功！",userBook);
         }
-        return new Result(ResultCode.FAIL,"查询节约历史信息失败！");
+        return new Result(ResultCode.FAIL,"查询借阅历史信息失败！");
+    }
+
+    @GetMapping("/getByUid/{pageSize}/{currentPage}/{uid}")
+    public Result<UserBook> getByUid(@PathVariable("pageSize")Integer pageSize,
+                                     @PathVariable("currentPage")Integer currentPage,
+                                     @PathVariable("uid")Integer uid){
+
+        PageInfo<UserBook> userBooks = userBookService.getByUid(currentPage, pageSize, uid);
+        if(userBooks.getList().size() > 0){
+            return new Result(ResultCode.SUCCESS,"查询用户借阅历史信息成功！",userBooks);
+        }
+        return new Result(ResultCode.FAIL,"查询用户借阅历史信息失败！");
     }
 
     @GetMapping("/select/{pageSize}/{currentPage}")
@@ -43,7 +55,7 @@ public class UserBookController {
     }
 
     @PostMapping("/save")
-    public Result<Integer> save(UserBook userBook){
+    public Result<Integer> save(@RequestBody UserBook userBook){
         int row = userBookService.save(userBook);
         if(row > 0){
             return new Result(ResultCode.SUCCESS,"添加节约历史成功！",row);
@@ -52,7 +64,7 @@ public class UserBookController {
     }
 
     @PutMapping("/update")
-    public Result<Integer> update(UserBook userBook){
+    public Result<Integer> update(@RequestBody UserBook userBook){
         int row = userBookService.update(userBook);
         if(row > 0){
             return new Result(ResultCode.SUCCESS,"修改节约历史信息成功！",row);
@@ -89,5 +101,16 @@ public class UserBookController {
         }
         return new Result(ResultCode.SUCCESS,"还书失败！");
     }
+    @GetMapping("/selectOneByUidAndBookId/{uid}/{bid}")
+    //查询出该用户借的这本书的一条记录，从而得到这条记录的id，然后根据id还书
+    public Result<UserBook> selectOneByUidAndBookId(@PathVariable("uid")Integer uid,@PathVariable("bid")Integer bid){
+        UserBook userBook=userBookService.selectOneByUidAndBookId(uid,bid);
+        if(userBook!=null){
+            return new Result<>(ResultCode.SUCCESS,"查询成功",userBook);
+        }
+        return new Result<>(ResultCode.FAIL,"查询失败");
+
+    }
+
 
 }

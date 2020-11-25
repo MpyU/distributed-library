@@ -20,6 +20,8 @@
         <module>library-lend-return-service</module>
         <module>library-message-service</module>
         <module>library-email-service</module>
+        <module>library-admin-service</module>
+        <module>library-elasticSearch-service</module>
     </modules>
 
     <dependencies>

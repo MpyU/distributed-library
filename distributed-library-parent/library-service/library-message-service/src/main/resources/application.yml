@@ -10,8 +10,11 @@ spring:
     username: root
     password: root
   redis:
-    host: 119.29.172.177
+    #品裕的：
+#    host: 119.29.172.177
+    host: 119.29.23.121
     port: 6379
+    password: ba36754794
   rabbitmq:
     host: 10.10.102.163
     port: 5672
